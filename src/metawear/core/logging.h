@@ -111,6 +111,13 @@ METAWEAR_API void mbl_mw_logger_subscribe(MblMwDataLogger* logger, void *context
  */
 METAWEAR_API const char* mbl_mw_logger_generate_identifier(const MblMwDataLogger* logger);
 
+/**
+ * Get the latest reset_uid read duing connection
+ * @param board                 Board to get reset_uid from
+ * @return value of reset_uid
+ */
+METAWEAR_API uint8_t mbl_mw_logging_get_latest_reset_uid(const MblMwMetaWearBoard* board);
+
 #ifdef	__cplusplus
 }
 #endif

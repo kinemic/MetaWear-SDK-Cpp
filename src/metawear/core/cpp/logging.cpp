@@ -818,3 +818,7 @@ void query_active_loggers(MblMwMetaWearBoard* board) {
     });
     state->create_next(false);
 }
+
+uint8_t mbl_mw_logging_get_latest_reset_uid(const MblMwMetaWearBoard* board) {
+    return GET_LOGGER_STATE(board)->latest_reset_uid;
+}

@@ -1147,6 +1147,13 @@ var Lib = ffi.Library(LIBMETAWEAR_PATH, {
   'mbl_mw_logger_generate_identifier': [ref.types.CString, [ref.refType(DataLogger)]],
 
 /**
+ * Get the latest reset_uid read duing connection
+ * @param board                 Board to get reset_uid from
+ * @return value of reset_uid
+ */
+  'mbl_mw_logging_get_latest_reset_uid': [ref.types.uint8, [ref.refType(MetaWearBoard)]],
+
+/**
  * Downloads the log data
  * @param board                     Board to download the log data from
  * @param n_notifies                How many progress updates to send
