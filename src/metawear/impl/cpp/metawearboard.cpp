@@ -14,6 +14,9 @@
 
 #include "metawear/core/metawearboard.h"
 #include "metawear/core/status.h"
+#include "metawear/core/logging.h"
+#include "metawear/core/datasignal.h"
+#include "metawear/core/types.h"
 
 #include "metawear/core/cpp/datasignal_private.h"
 #include "metawear/core/cpp/debug_private.h"
@@ -372,8 +375,20 @@ static inline void service_discovery_completed(MblMwMetaWearBoard* board) {
         it(board);
     }
 
-    uint8_t command[2] = { MBL_MW_MODULE_LOGGING, READ_REGISTER(ORDINAL(LoggingRegister::TIME)) };
-    SEND_COMMAND;
+    MblMwDataSignal *signal = mbl_mw_logging_get_time_data_signal(board);
+    mbl_mw_datasignal_subscribe(signal, board, [](void *context, const MblMwData* data) {
+        MblMwMetaWearBoard* board = static_cast<MblMwMetaWearBoard*>(context);
+        mbl_mw_datasignal_unsubscribe(mbl_mw_logging_get_time_data_signal(board));
+        if (board->initialized_timeout != nullptr) {
+            board->initialized_timeout->cancel();
+        }
+        MblMwLoggingTime *time = static_cast<MblMwLoggingTime*>(data->value);
+        mbl_mw_logging_set_reference_time(board, time->reset_uid, time->epoch);
+        mbl_mw_logging_set_latest_reset_uid(board, time->reset_uid);
+
+        board->initialized(board->initialized_context, board, MBL_MW_STATUS_OK);
+    });
+    mbl_mw_datasignal_read(signal);
 }
 
 static inline void queue_next_query(MblMwMetaWearBoard *board) {
